@@ -1,4 +1,9 @@
 function scheduleHtmlParser(html) {
+  //除函数名外都可编辑
+  //传入的参数为上一步函数获取到的html
+  //可使用正则匹配
+  //可使用解析dom匹配，工具内置了$，跟jquery使用方法一样，直接用就可以了，参考：https://juejin.im/post/5ea131f76fb9a03c8122d6b9
+  //以下为示例，您可以完全重写或在此基础上更改
   const timeTable = [
     ["08:00", "08:45"], // startTime, endTime
     ["08:55", "09:40"],
@@ -59,8 +64,9 @@ function scheduleHtmlParser(html) {
           courseInfo.name = el.data.trim();
         } else if (el.type === "tag" && el.name === "span") {
           courseInfo.name = el.prev.data;
+          // O表示整体调课，P表示部分调课
+          //           courseInfo.status = $(el).children().first().text().trim();
         }
-
         const timeStr = $(teacher)
           .nextAll("font[title='周次(节次)']")
           .first()
@@ -74,11 +80,10 @@ function scheduleHtmlParser(html) {
             ...new Set([...pre, ...[...Array(end + 1).keys()].slice(begin)]),
           ];
         }, []);
-
         courseInfo.sections = sections
           .replace("]", "")
           .split("-")
-          .map((val) => ({ section: parseInt(val) }));
+          .map((val) => sectionTimes.find((v) => v.section === parseInt(val)));
         courseInfos.push(courseInfo);
       });
     });
